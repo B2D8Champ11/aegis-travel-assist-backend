@@ -7,20 +7,23 @@ export const client = new OpenAI({
 export async function structured<T>(args: {
   system: string;
   user: string;
-  schema: any;
+  schema: any;   // zod schema
   force_json?: boolean;
 }) {
-  const res = await client.responses.create({
+  const completion = await client.chat.completions.create({
     model: process.env.MODEL || "gpt-4.1",
-    input: [
+    messages: [
       { role: "system", content: args.system },
       { role: "user", content: args.user },
     ],
     temperature: 0.2,
-    response_format: args.force_json ? { type: "json_object" } : undefined,
+    // Only ask for JSON when we explicitly want it
+    ...(args.force_json
+      ? { response_format: { type: "json_object" } as any }
+      : {}),
   });
 
-  const text = (res.output_text || "").trim();
+  const text = completion.choices[0]?.message?.content ?? "";
   const json = JSON.parse(text);
   return args.schema.parse(json);
 }
