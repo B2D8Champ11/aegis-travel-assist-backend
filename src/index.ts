@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { classifyIntent } from "./router.js";
 import { travelAdvisor } from "./agents/travel.js";
 import { riskAnalyst } from "./agents/risk.js";
@@ -8,6 +9,7 @@ import { triageAgent } from "./agents/triage.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 
 app.post("/chat", async (req, res) => {
   try {
