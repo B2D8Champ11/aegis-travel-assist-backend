@@ -44,6 +44,9 @@ app.post("/chat", async (req, res) => {
     return res.status(500).json({ error: e.message || "Server error" });
   }
 });
+app.get("/", (_, res) => {
+  res.send("Aegis Travel Assist Backend is running 🚀");
+});
 
 app.get("/health", (_,res)=>res.json({ ok:true }));
 
